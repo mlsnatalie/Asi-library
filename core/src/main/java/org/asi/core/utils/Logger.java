@@ -16,7 +16,8 @@ import java.util.Formatter;
 import java.util.Locale;
 
 public class Logger {
-    public static String tagPrefix = "";  // 自定义Tag的前缀，可以是作者名
+
+    public static String customTagPrefix = "";  // 自定义Tag的前缀，可以是作者名
     public static boolean isSaveLog = false;    // 是否把保存日志到SD卡中
     public static final String LOG_PATH = Environment.getExternalStorageDirectory().getPath(); // SD卡中的根目录
 
@@ -25,144 +26,310 @@ public class Logger {
     private Logger() {
     }
 
-    private static String generateTag() {
-        StackTraceElement caller = getCallerStackTraceElement();
+    // 容许打印日志的类型，默认是true，设置为false则不打印
+    public static boolean allowD = true;
+    public static boolean allowE = true;
+    public static boolean allowI = true;
+    public static boolean allowV = true;
+    public static boolean allowW = true;
+    public static boolean allowWtf = true;
+
+    private static String generateTag(StackTraceElement caller) {
         String tag = "%s.%s(Line:%d)"; // 占位符
         String callerClazzName = caller.getClassName(); // 获取到类名
         callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1);
         tag = String.format(tag, callerClazzName, caller.getMethodName(), caller.getLineNumber()); // 替换
-        tag = TextUtils.isEmpty(tagPrefix) ? tag : tagPrefix + ":" + tag;
+        tag = TextUtils.isEmpty(customTagPrefix) ? tag : customTagPrefix + ":" + tag;
+
         return tag;
     }
 
+    /**
+     * 自定义的logger
+     */
+    public static CustomLogger customLogger;
+
+    public interface CustomLogger {
+        void d(String tag, String content);
+        void d(String tag, String content, Throwable e);
+
+        void e(String tag, String content);
+        void e(String tag, String content, Throwable e);
+
+        void i(String tag, String content);
+        void i(String tag, String content, Throwable e);
+
+        void v(String tag, String content);
+        void v(String tag, String content, Throwable e);
+
+        void w(String tag, String content);
+        void w(String tag, String content, Throwable e);
+        void w(String tag, Throwable tr);
+
+        void wtf(String tag, String content);
+        void wtf(String tag, String content, Throwable e);
+        void wtf(String tag, Throwable tr);
+    }
 
     public static void d(String content) {
-        String tag =generateTag();
+        if (!allowD) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.d(tag, content);
+        } else {
             Log.d(tag, content);
+        }
     }
 
     public static void d(String content, Throwable e) {
-        String tag = generateTag();
+        if (!allowD) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.d(tag, content, e);
+        } else {
             Log.d(tag, content, e);
+        }
     }
 
     public static void e(String content) {
-        String tag = generateTag();
+        if (!allowE) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.e(tag, content);
+        } else {
             Log.e(tag, content);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void e(Throwable e) {
-        String tag = generateTag();
+        if (!allowE) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.e(tag, "error", e);
+        } else {
             Log.e(tag, e.getMessage(), e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, e.getMessage());
         }
     }
 
     public static void e(String content, Throwable e) {
-        String tag = generateTag();
+        if (!allowE) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.e(tag, content, e);
+        } else {
             Log.e(tag, content, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, e.getMessage());
         }
     }
 
     public static void i(String content) {
-        String tag = generateTag();
+        if (!allowI) {
+            return;
+        }
 
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.i(tag, content);
+        } else {
             Log.i(tag, content);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void i(String content, Throwable e) {
-        String tag = generateTag();
+        if (!allowI) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.i(tag, content, e);
+        } else {
             Log.i(tag, content, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void v(String content) {
-        String tag = generateTag();
+        if (!allowV) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.v(tag, content);
+        } else {
             Log.v(tag, content);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void v(String content, Throwable e) {
+        if (!allowV) {
+            return;
+        }
 
-        String tag = generateTag();
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
-
+        if (customLogger != null) {
+            customLogger.v(tag, content, e);
+        } else {
             Log.v(tag, content, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void w(String content) {
+        if (!allowW) {
+            return;
+        }
 
-        String tag = generateTag();
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
-
+        if (customLogger != null) {
+            customLogger.w(tag, content);
+        } else {
             Log.w(tag, content);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void w(String content, Throwable e) {
-        String tag = generateTag();
+        if (!allowW) {
+            return;
+        }
 
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
+        if (customLogger != null) {
+            customLogger.w(tag, content, e);
+        } else {
             Log.w(tag, content, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void w(Throwable e) {
+        if (!allowW) {
+            return;
+        }
 
-        String tag = generateTag();
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.w(tag, e);
+        } else {
             Log.w(tag, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, e.toString());
         }
     }
 
     public static void wtf(String content) {
+        if (!allowWtf) {
+            return;
+        }
 
-        String tag = generateTag();
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
-
+        if (customLogger != null) {
+            customLogger.wtf(tag, content);
+        } else {
             Log.wtf(tag, content);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void wtf(String content, Throwable e) {
+        if (!allowWtf) {
+            return;
+        }
 
-        String tag = generateTag();
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
-
+        if (customLogger != null) {
+            customLogger.wtf(tag, content, e);
+        } else {
             Log.wtf(tag, content, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
 
     public static void wtf(Throwable e) {
+        if (!allowWtf) {
+            return;
+        }
 
-        String tag = generateTag();
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
+        if (customLogger != null) {
+            customLogger.wtf(tag, e);
+        } else {
             Log.wtf(tag, e);
+        }
         if (isSaveLog) {
             point(LOG_PATH, tag, e.toString());
         }

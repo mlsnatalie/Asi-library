@@ -84,10 +84,10 @@ public class ServiceFactory {
         if (httpClientBuilder.interceptors() != null) {
             httpClientBuilder.interceptors().clear();
         }
-        httpClientBuilder.addNetworkInterceptor(new HttpCacheInterceptor())
-                .addInterceptor(
+        httpClientBuilder.addNetworkInterceptor(new HttpCacheInterceptor());
+        httpClientBuilder  .addInterceptor(
                         new HttpLoggingInterceptor().setLevel(
-                                 BuildConfig.DEBUG? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE));
+                                 BuildConfig.DEBUG? HttpLoggingInterceptor.Level.NONE : HttpLoggingInterceptor.Level.BODY));
         return httpClientBuilder.build();
     }
 }
