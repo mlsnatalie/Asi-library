@@ -1,0 +1,30 @@
+ext {
+
+    android_support_version = '24.2.1'
+    android = [
+            compileSdkVersion : 24,
+            buildToolsVersion : "24.0.3",
+            applicationId : "cn.studyjams.s1.contest.News",
+            minSdkVersion : 21,
+            targetSdkVersion : 24,
+            versionCode : 1,
+            versionName : "1.0"
+    ]
+    dependencies = [
+            //android.support
+            "appcompat-v7": "com.android.support:appcompat-v7:${android_support_version}",
+            "design" : "com.android.support:design:${android_support_version}",
+            "recyclerview-v7"    : "com.android.support:recyclerview-v7:${android_support_version}",
+            "cardview"           : "com.android.support:cardview-v7:${android_support_version}",
+            //retrofit+rxjava
+            "retrofit"           : "com.squareup.retrofit2:retrofit:2.1.0",
+            "converter-gson"     : "com.squareup.retrofit2:converter-gson:2.1.0",
+            "adapter-rxjava"     : "com.squareup.retrofit2:adapter-rxjava:2.1.0",
+            "logging-interceptor": "com.squareup.okhttp3:logging-interceptor:3.4.1",
+            "rxandroid"          : "io.reactivex:rxandroid:1.2.0",
+            //butterknif
+            "butterknife"        : "com.jakewharton:butterknife:5.1.1"
+    ]
+
+
+}
