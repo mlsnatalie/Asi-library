@@ -12,13 +12,20 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
+import org.asi.core.rxbus.RxBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 public abstract class BaseActivity<V extends  BaseView,T extends BasePresenter<V>> extends AppCompatActivity {
 
+    private  CompositeSubscription mSubscriptions ;
     protected T mPresenter;
     /**
      * 权限授权回掉
@@ -48,14 +55,39 @@ public abstract class BaseActivity<V extends  BaseView,T extends BasePresenter<V
         mPresenter =setPresenter() ;
         mPresenter.attachView((V)this);
         this.onInitData();
+        registerEvent();
+    }
+
+    /**
+     * 注册RxBus监听事件
+     */
+    protected void registerEvent() {
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mPresenter != null)
+        if (mPresenter != null){
             mPresenter.detachView();
+        }
+        if (mSubscriptions != null){
+            mSubscriptions.clear();
+        }
+    }
+
+    public <T> void addRxBusEvent(Class<T> eventType, Action1<? super  T>onNext ) {
+        Subscription subscribe = RxBus.getDefault().toObservable(eventType)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNext);
+        addSubscription(subscribe);
+    }
+
+    private void addSubscription(Subscription subscribe) {
+        if (mSubscriptions==null){
+            mSubscriptions=new CompositeSubscription();
+        }
+        mSubscriptions.add(subscribe);
     }
 
     protected void startActivityWithoutExtras(Class<?> clazz) {

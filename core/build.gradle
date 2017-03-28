@@ -22,15 +22,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
     //android
-    compile rootProject .ext.dependencies[ "design"]
-    compile rootProject .ext.dependencies[ "appcompat-v7"]
-    compile rootProject .ext.dependencies[ "recyclerview-v7"]
+    compile rootProject.ext.dependencies["design"]
+    compile rootProject.ext.dependencies["appcompat-v7"]
+    compile rootProject.ext.dependencies["recyclerview-v7"]
     //http
     compile rootProject.ext.dependencies["retrofit"]
     compile rootProject.ext.dependencies["converter-gson"]
@@ -39,7 +39,4 @@ dependencies {
     compile rootProject.ext.dependencies["rxandroid"]
     //butterknife
     compile rootProject.ext.dependencies["butterknife"]
-
-
-
 }

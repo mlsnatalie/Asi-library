@@ -3,7 +3,7 @@ ext {
     android_support_version = '24.2.1'
     android = [
             compileSdkVersion : 24,
-            buildToolsVersion : "24.0.3",
+            buildToolsVersion : "25.0.0",
             applicationId : "cn.studyjams.s1.contest.News",
             minSdkVersion : 21,
             targetSdkVersion : 24,
